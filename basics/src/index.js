@@ -2,13 +2,54 @@ import { GraphQLServer } from 'graphql-yoga'
 
 // Scalar types - String, Boolean, Int, Float, ID
 
+// Demo user data
+const users = [{
+  id: '1',
+  name: 'Jeremy',
+  email: 'jeremy@example.com',
+  age: 38
+}, {
+  id: '2',
+  name: 'Amy',
+  email: 'amy@example.com'
+}, {
+  id: '3',
+  name: 'Moses',
+  email: 'moses@example.com'
+}]
+
+// Demo post data
+const posts = [{
+  id: '101',
+  title: 'Getting Started with GraphQL',
+  body: 'Blah Blah Blah',
+  published: true
+}, {
+  id: '102',
+  title: 'GraphQL: Next Steps',
+  body: 'Yada, yada, yada...',
+  published: false
+}, {
+  id: '103',
+  title: 'Mastering the Art of Fart',
+  body: 'Pffffft',
+  published: false
+}]
+
 // Type definitions (schema)
 const typeDefs = `
   type Query {
-    add(numbers: [Float!]!): Float!
-    grades: [Int!]!
-    greeting(name: String, position: String): String!
+    users(query: String): [User!]!
+    posts(query: String): [Post!]!
+    me: User!
     post: Post!
+  }
+
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+    age: Int
   }
 
   type Post {
@@ -22,32 +63,29 @@ const typeDefs = `
 // Resolvers
 const resolvers = {
   Query: {
-    add(parent, args) {
-      if (args.numbers.length == 0) {
-        return 0
-      } 
-      
-      return args.numbers.reduce((acc, cur) => {
-        return acc + cur
+    users(parent, args, ctx, info) {
+      if (!args.query) {
+        return users
+      }
+      return users.filter((user) => {
+        return user.name.toLowerCase().includes(args.query.toLowerCase());
       })
     },
-    grades(parent, args, ctx, info) {
-      return [99, 80, 93]
-    },
-    greeting(parent, args, ctx, info) {
-      if (args.name && args.position) {
-        return `Hello, ${args.name}! You are my favorite ${args.position}.`
-      } else {
-        return `Hello!`
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return posts
       }
-
+      return posts.filter((post) => {
+        const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
+        const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
+        return isTitleMatch || isBodyMatch
+      })
     },
-    post() {
+    me() {
       return {
-        id: '56789',
-        title: 'Getting started with GraphQL',
-        body: 'Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh.',
-        published: true
+        id: 12345,
+        name: 'Mike',
+        email: 'mike@example.com'
       }
     }
   }
