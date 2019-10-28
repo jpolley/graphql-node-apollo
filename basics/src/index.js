@@ -5,31 +5,27 @@ import { GraphQLServer } from 'graphql-yoga'
 // Type definitions (schema)
 const typeDefs = `
   type Query {
+    post: Post!
+  }
+
+  type Post {
     id: ID!,
-    name: String!,
-    age: Int!,
-    employed: Boolean!,
-    gpa: Float
+    title: String!,
+    body: String!,
+    published: Boolean!
   }
 `
 
 // Resolvers
 const resolvers = {
   Query: {
-    id() {
-      return 'abc123'
-    },
-    name() {
-      return 'Jeremy'
-    },
-    age() {
-      return 37
-    }, 
-    employed() {
-      return true
-    },
-    gpa() {
-      return null
+    post() {
+      return {
+        id: '56789',
+        title: 'Getting started with GraphQL',
+        body: 'Morbi odio eros, volutpat ut pharetra vitae, lobortis sed nibh.',
+        published: true
+      }
     }
   }
 }
