@@ -43,19 +43,23 @@ const posts = [{
 const comments = [{
   id: '401',
   text: 'Allow omitting constant primitive deps',
-  author: '3'
+  author: '3',
+  post: '101'
 }, {
   id: '402',
   text: 'Deprecate ref.setNativeProps in favor of ReactNative.setNativeProps',
-  author: '1'
+  author: '1',
+  post: '101'
 }, {
   id: '403',
   text: 'Fix UMD builds by re-exporting the scheduler priorities',
-  author: '2'
+  author: '2',
+  post: '102'
 }, {
   id: '404',
   text: 'Remove false positive warning and add TODOs about `current` being non-null',
-  author: '1'
+  author: '1',
+  post: '102'
 }]
 
 // Type definitions (schema)
@@ -82,13 +86,15 @@ const typeDefs = `
     title: String!,
     body: String!,
     published: Boolean!
-    author: User!
+    author: User!,
+    comments: [Comment!]!
   }
    
   type Comment {
     id: ID!
     text: String!
     author: User!
+    post: Post!
   }
 `
 
@@ -127,11 +133,17 @@ const resolvers = {
   Post: {
     author(parent, args, ctx, info) {
       return users.find((user) => user.id === parent.author)
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => comment.post === parent.id)
     }
   },
   Comment: {
     author(parent, args, ctx, info) {
       return users.find((user) => user.id === parent.author)
+    },
+    post(parent, args, ctx, info) {
+      return posts.find((post) => post.id === parent.post)
     }
   },
   User: {
