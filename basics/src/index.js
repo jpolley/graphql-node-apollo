@@ -23,17 +23,20 @@ const posts = [{
   id: '101',
   title: 'Getting Started with GraphQL',
   body: 'Blah Blah Blah',
-  published: true
+  published: true,
+  author: '1'
 }, {
   id: '102',
   title: 'GraphQL: Next Steps',
   body: 'Yada, yada, yada...',
-  published: false
+  published: false,
+  author: '1'
 }, {
   id: '103',
   title: 'Mastering the Art of Fart',
   body: 'Pffffft',
-  published: false
+  published: false,
+  author: '2'
 }]
 
 // Type definitions (schema)
@@ -57,6 +60,7 @@ const typeDefs = `
     title: String!,
     body: String!,
     published: Boolean!
+    author: User!
   }
 `
 
@@ -87,6 +91,11 @@ const resolvers = {
         name: 'Mike',
         email: 'mike@example.com'
       }
+    }
+  },
+  Post: {
+    author(parent, args, ctx, info) {
+      return users.find((user) => user.id === parent.author)
     }
   }
 }
