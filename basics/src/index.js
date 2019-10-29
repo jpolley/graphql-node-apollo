@@ -42,16 +42,20 @@ const posts = [{
 // Demo comment data
 const comments = [{
   id: '401',
-  text: 'Allow omitting constant primitive deps'
+  text: 'Allow omitting constant primitive deps',
+  author: '3'
 }, {
   id: '402',
-  text: 'Deprecate ref.setNativeProps in favor of ReactNative.setNativeProps'
+  text: 'Deprecate ref.setNativeProps in favor of ReactNative.setNativeProps',
+  author: '1'
 }, {
   id: '403',
-  text: 'Fix UMD builds by re-exporting the scheduler priorities'
+  text: 'Fix UMD builds by re-exporting the scheduler priorities',
+  author: '2'
 }, {
   id: '404',
-  text: 'Remove false positive warning and add TODOs about `current` being non-null'
+  text: 'Remove false positive warning and add TODOs about `current` being non-null',
+  author: '1'
 }]
 
 // Type definitions (schema)
@@ -59,7 +63,7 @@ const typeDefs = `
   type Query {
     users(query: String): [User!]!
     posts(query: String): [Post!]!
-    comments: [Comment!]!
+    comments(query: String): [Comment!]!
     me: User!
     post: Post!
   }
@@ -70,6 +74,7 @@ const typeDefs = `
     email: String!
     age: Int
     posts: [Post!]!
+    comments: [Comment!]!
   }
 
   type Post {
@@ -83,6 +88,7 @@ const typeDefs = `
   type Comment {
     id: ID!
     text: String!
+    author: User!
   }
 `
 
@@ -123,11 +129,17 @@ const resolvers = {
       return users.find((user) => user.id === parent.author)
     }
   },
+  Comment: {
+    author(parent, args, ctx, info) {
+      return users.find((user) => user.id === parent.author)
+    }
+  },
   User: {
     posts(parent, args, ctx, info) {
-      return posts.filter((post) => {
-        return post.author === parent.id
-      })
+      return posts.filter((post) => post.author === parent.id)
+    },
+    comments(parent, args, ctx, info) {
+      return comments.filter((comment) => comment.author === parent.id)
     }
   }
 }
