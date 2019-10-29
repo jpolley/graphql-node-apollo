@@ -39,11 +39,27 @@ const posts = [{
   author: '2'
 }]
 
+// Demo comment data
+const comments = [{
+  id: '401',
+  text: 'Allow omitting constant primitive deps'
+}, {
+  id: '402',
+  text: 'Deprecate ref.setNativeProps in favor of ReactNative.setNativeProps'
+}, {
+  id: '403',
+  text: 'Fix UMD builds by re-exporting the scheduler priorities'
+}, {
+  id: '404',
+  text: 'Remove false positive warning and add TODOs about `current` being non-null'
+}]
+
 // Type definitions (schema)
 const typeDefs = `
   type Query {
     users(query: String): [User!]!
     posts(query: String): [Post!]!
+    comments: [Comment!]!
     me: User!
     post: Post!
   }
@@ -62,6 +78,11 @@ const typeDefs = `
     body: String!,
     published: Boolean!
     author: User!
+  }
+   
+  type Comment {
+    id: ID!
+    text: String!
   }
 `
 
@@ -85,6 +106,9 @@ const resolvers = {
         const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
         return isTitleMatch || isBodyMatch
       })
+    },
+    comments(parent, args, ctx, info) {
+      return comments
     },
     me() {
       return {
